@@ -2,24 +2,34 @@
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class Graphs {
 
-    // Instantiate Vertices and Edges Class
+    // Input Filename
+    private final static String dataFileName = "karate.gml";
 
+    // Instantiate Vertices and Edges Class
     private List <Vertex> vertexList = new ArrayList<Vertex>();
     private List <Edge> edgeList = new ArrayList<Edge>();
-    private Integer[][] adjMap;
-    private Boolean isGraphBuilt = false;
 
+    // Adjacency Matrix
+    private Integer[][] adjMap;
+
+    // Flag to check whether the graph is built
+    private static Boolean isGraphBuilt = false;
+
+    // Set MAX Value
     private static Integer INFINITY = 99999999;
+
+    // Performance of Algorithm
+    private Long performance = -1L;
 
     public static void main(String[] args) {
         Graphs graphs = new Graphs();
 
-        String dataFileName = "karate.gml";
         String choice = null;
 
         while (choice == null || !choice.equalsIgnoreCase("exit")){
@@ -28,18 +38,24 @@ public class Graphs {
             Scanner sc = new Scanner(System.in);
             choice = sc.nextLine();
 
-            switch (choice) {
+            switch (choice.toLowerCase()) {
                 case "graph":
                     graphs.buildGraph(dataFileName);
                     break;
 
+                case "print":
+                    graphs.printGraph();
+                    break;
+
                 case "fw":
-                case "FW" :
                     graphs.doFloydWarshall();
                     break;
 
+                case "performance":
+                    graphs.getPerformance();
+                    break;
+
                 case "exit":
-                case "Exit":
                     break;
 
                 default:
@@ -136,19 +152,39 @@ public class Graphs {
         }
         // Updating Adjaceny Matrix with Edges- END
 
-        for(int i = 0; i < size; i ++) {
-            for(int j = 0; j < size; j++) {
-                if(adjMap[i][j] == INFINITY){
-                    System.out.print(" 0 ");
-                } else {
-                    System.out.print(" " + adjMap[i][j] + " ");
-                }
-            }
-            System.out.println();
-        }
-
         // Set the isGraphBuilt property to TRUE
         isGraphBuilt = true;
+    }
+
+    // Prints the Graph
+
+    private void printGraph() {
+        if (!isGraphBuilt) {
+            System.out.println("\nGraph is not built. Please use the \'graph\' command to build the graph.\n");
+        } else {
+            int size = vertexList.size();
+
+            for (int i = 0; i < size; i++) {
+                for (int j = 0; j < size; j++) {
+                    if (adjMap[i][j] == INFINITY) {
+                        System.out.print(" 0 ");
+                    } else {
+                        System.out.print(" " + adjMap[i][j] + " ");
+                    }
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    // Algorithm Performance
+
+    private void getPerformance() {
+        if (performance == -1) {
+            System.out.println("\nAlgorithm has not been implemented !\n");
+        } else {
+            System.out.println("\nPerformance:\t\t" + performance + " ms");
+        }
     }
 
     // Vertex Class
@@ -156,7 +192,7 @@ public class Graphs {
     private class Vertex {
         Integer id;
 
-        public Vertex(Integer id) {
+        private Vertex(Integer id) {
             this.id = id;
         }
 
@@ -172,7 +208,7 @@ public class Graphs {
         Integer sourceId;
         Integer targetId;
 
-        public Edge(Integer sourceId, Integer targetId) {
+        private Edge(Integer sourceId, Integer targetId) {
             this.sourceId = sourceId;
             this.targetId = targetId;
         }
@@ -188,36 +224,49 @@ public class Graphs {
     /* FLOYD-WARSHALL ALGORITHM */
 
     private void doFloydWarshall() {
-        int size = vertexList.size();
 
-        Integer[][] distanceMatrix = new Integer[size][size];
+        if(!isGraphBuilt) {
+            System.out.println("\nGraph is not built. Please use the \'graph\' command to build the graph.\n");
+        } else {
+            // Capture Performance Details
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                distanceMatrix[i][j] = adjMap[i][j];
-            }
-        }
+            Long startTime = System.currentTimeMillis();
 
-        for (int k = 0; k < size; k++) {
+            // ALGORITHM BEGIN
+            int size = vertexList.size();
+
+            Integer[][] distanceMatrix = new Integer[size][size];
+
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
-                    if (distanceMatrix[i][k] + distanceMatrix[k][j] < distanceMatrix[i][j]) {
-                        distanceMatrix[i][j] = distanceMatrix[i][k] + distanceMatrix[k][j];
+                    distanceMatrix[i][j] = adjMap[i][j];
+                }
+            }
+
+            for (int k = 0; k < size; k++) {
+                for (int i = 0; i < size; i++) {
+                    for (int j = 0; j < size; j++) {
+                        if (distanceMatrix[i][k] + distanceMatrix[k][j] < distanceMatrix[i][j]) {
+                            distanceMatrix[i][j] = distanceMatrix[i][k] + distanceMatrix[k][j];
+                        }
                     }
                 }
             }
-        }
+            // ALGORITHM END
 
-        // Print the Output of Floyd-Warshall Algorithm Implementation
-        for(int i = 0; i < size; i ++) {
-            for(int j = 0; j < size; j++) {
-                if(distanceMatrix[i][j] == INFINITY){
-                    System.out.print(" 0 ");
-                } else {
-                    System.out.print(" " + distanceMatrix[i][j] + " ");
+            performance = System.currentTimeMillis() - startTime;
+
+            // Print the Output of Floyd-Warshall Algorithm Implementation
+            for(int i = 0; i < size; i ++) {
+                for(int j = 0; j < size; j++) {
+                    if(distanceMatrix[i][j] == INFINITY){
+                        System.out.print(" 0 ");
+                    } else {
+                        System.out.print(" " + distanceMatrix[i][j] + " ");
+                    }
                 }
+                System.out.println();
             }
-            System.out.println();
         }
     }
 }
