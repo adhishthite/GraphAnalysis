@@ -55,11 +55,11 @@ public class Graphs {
                     graphs.getPerformance();
                     break;
 
-                case "exit":
+                case "quit":
                     break;
 
                 default:
-                    System.out.println("\n" + choice + " - Invalid Command, type \'exit\' to close this program.");
+                    System.out.println("\n" + choice + " - Invalid Command, type \'quit\' to close this program.");
                     break;
             }
         }
