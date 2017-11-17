@@ -19,7 +19,7 @@ public class Graphs {
     public static void main(String[] args) {
         Graphs graphs = new Graphs();
 
-        String dataFileName = "power.gml";
+        String dataFileName = "karate.gml";
         String choice = null;
 
         while (choice == null || !choice.equalsIgnoreCase("exit")){
@@ -58,7 +58,6 @@ public class Graphs {
             BufferedReader buffReader = new BufferedReader(new FileReader(inputFile));
             String readLine;
 
-            int node = 0 , edge = 0;
             while ((readLine = buffReader.readLine()) != null) {
                 readLine = readLine.trim();
 
@@ -68,18 +67,11 @@ public class Graphs {
 
                 // NODE (VERTICES CLASS) - BEGIN
                 if (readLine.equalsIgnoreCase("node")) {
-                    System.out.println("node " + node++);
                     nextLine = buffReader.readLine();
                     if(nextLine.trim().equalsIgnoreCase("[")) {
                         nextLine = buffReader.readLine();
 
                         if(nextLine.contains("id"))  {
-//                            nextLine = nextLine.trim();
-//                            String split[] = nextLine.split("\\s+");
-//
-//                            if(split[0].equalsIgnoreCase("id")) {
-//                                vertexList.add(new Vertex(Integer.parseInt(split[1])));
-//                            }
                             vertexList.add(new Vertex(Integer.parseInt(nextLine.trim().split("\\s+")[1])));
                         }
                     }
@@ -92,7 +84,6 @@ public class Graphs {
 
                 // EDGES - BEGIN
                 if (readLine.equalsIgnoreCase("edge")) {
-                    System.out.println("edge " + edge++);
                     Integer sourceId = null;
                     Integer targetId = null;
 
@@ -101,26 +92,12 @@ public class Graphs {
                         nextLine = buffReader.readLine();
 
                         if(nextLine.contains("source"))  {
-//                            nextLine = nextLine.trim();
-//                            String split[] = nextLine.trim().split("\\s+");
-//
-//                            if(split[0].equalsIgnoreCase("source")) {
-//                                sourceId = Integer.parseInt(split[1]);
-//                            }
-
                             sourceId = Integer.parseInt(nextLine.trim().split("\\s+")[1]);
                         }
 
                         nextLine = buffReader.readLine();
 
                         if(nextLine.contains("target"))  {
-//                            nextLine = nextLine.trim();
-//                            String split[] = nextLine.split("\\s+");
-//
-//                            if(split[0].equalsIgnoreCase("target")) {
-//                                targetId = Integer.parseInt(split[1]);
-//                            }
-
                             targetId = Integer.parseInt(nextLine.trim().split("\\s+")[1]);
                         }
                     }
@@ -155,7 +132,7 @@ public class Graphs {
 
         // Updating Adjaceny Matrix with Edges - BEGIN
         for(Edge tempEdge : edgeList) {
-            adjMap[tempEdge.sourceId][tempEdge.targetId] = adjMap[tempEdge.targetId][tempEdge.sourceId] = 1;
+            adjMap[tempEdge.sourceId - 1][tempEdge.targetId - 1] = adjMap[tempEdge.targetId - 1][tempEdge.sourceId - 1] = 1;
         }
         // Updating Adjaceny Matrix with Edges- END
 
